@@ -1,5 +1,7 @@
 package kr.co.shineware.feature.selection;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import kr.co.shineware.feature.model.CountMap;
@@ -16,6 +18,7 @@ public class FeatureSelector {
 		this.tfMap = new CountMap();
 		this.dfMap = new CountMap();
 		this.cfMap = new CountMap();
+		this.cofMap = new CountMap();
 	}
 
 	public void addFeature(LabeledFeature data){
@@ -38,7 +41,9 @@ public class FeatureSelector {
 		Set<String> labels = cfMap.getKeys();
 		Set<String> terms = dfMap.getKeys();
 		int n = this.getTotalDocument(); //N
+		int count = 0;
 		for (String label : labels) {
+			Map<String,Double> scoreMap = new HashMap<String, Double>();
 			int categoryFreq = this.getCategoryFreq(label); //A+C
 			for (String term : terms) {
 				int df = this.getDf(term); //A+B
@@ -47,8 +52,9 @@ public class FeatureSelector {
 					continue;
 				}
 				double score = this.getChisqrScore(n,df,categoryFreq,cooccurFreq);
-				System.out.println(score);
 			}
+			count++;
+			System.out.println("Label Done "+count+"/"+labels.size()+" : "+label);
 		}
 	}
 
